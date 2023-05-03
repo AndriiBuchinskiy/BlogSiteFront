@@ -1,18 +1,21 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
-import CategoryView from "@/views/CategoryView.vue";
-import TagsView from "@/views/TagsView.vue";
 import SinglePost from "@/components/SinglePost.vue";
 import CreatePost from "@/views/CreatePost.vue";
+import PostView from "@/views/PostView.vue";
+
 
 const routes = [
     {
         path: "/",
-        component: SinglePost
+        name: "Home",
+        component: SinglePost,
+        meta: { requiresAuth: true }
     },
     {
         path: "/login",
+        name: "login",
         component: LoginView
     },
     {
@@ -20,26 +23,56 @@ const routes = [
         component: RegisterView
     },
     {
-        path: "/category",
-        component: CategoryView
-    },
-    {
-        path: "/tags",
-        component: TagsView
-    },
-    {
-        path: "/posts",
-        component: SinglePost
-    },
-    {
         path: "/createPost",
-        component: CreatePost
+        name: "CreatePost",
+        component: CreatePost,
+        meta: { requiresAuth: true }
+
     },
+    {
+        path: "/posts/:id",
+        name: "PostView",
+        component: PostView,
+        meta: { requiresAuth: true }
+
+    },
+    {
+        path: '/404',
+        name: '404',
+        component: () => '',
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        redirect: '/',
+    },
+
 ]
 
 const router = createRouter({
     routes,
     history: createWebHashHistory(process.env.BASE_URL)
 })
+
+router.beforeEach((to, from, next) => {
+    let requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+    const isAuthenticated = localStorage.getItem('auth') !== null ;
+
+    if (requiresAuth && !isAuthenticated) {
+        next('/login');
+    } else
+    {
+        next();
+    }
+});
+
+
+
+
+
+
+
+
+
+
 
 export default router;

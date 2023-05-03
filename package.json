@@ -13,9 +13,13 @@
     "core-js": "^3.8.3",
     "pinia": "^2.0.33",
     "pinia-plugin-persistedstate": "^3.1.0",
+    "pusher-js": "^8.0.2",
+    "socket.io-client": "^4.6.1",
     "vue": "^3.2.13",
     "vue-final-modal": "^4.1.4",
+    "vue-pagination-2": "^3.1.0",
     "vue-router": "^4.1.6",
+    "vuejs-paginate": "^2.1.0",
     "vuetify": "^3.1.12"
   },
   "devDependencies": {

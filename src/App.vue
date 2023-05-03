@@ -12,8 +12,8 @@
 //import RegisterForm from "@/components/RegisterForm.vue";
 import HeaderApp from "@/HeaderApp.vue";
 
-//import SinglePost from "@/components/SinglePost.vue";
-//import SinglePost from "@/components/SinglePost.vue";
+//import SinglePost from "@/components/PostsView.vue";
+//import SinglePost from "@/components/PostsView.vue";
 //import PostsView from "@/components/PostsView.vue";
 
 export default {

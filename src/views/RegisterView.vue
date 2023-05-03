@@ -12,22 +12,26 @@
                                     <h2 class="fw-bold mb-2 text-uppercase">Реєстрація</h2>
 
                                     <div class="form-outline form-white mb-4">
-                                        <input v-model="name" type="text" id="typeNameX" class="form-control form-control-lg"/>
                                         <label class="form-label" for="typeNameX">Ім'я</label>
+                                        <input v-model="name" type="text" id="typeNameX" class="form-control form-control-lg" @input="validateName"/>
+                                        <span class="text-danger">{{ nameError }}</span>
                                     </div>
 
                                     <div class="form-outline form-white mb-4">
-                                        <input v-model="email" type="email" id="typeEmailX" class="form-control form-control-lg"/>
                                         <label class="form-label" for="typeEmailX">Пошта</label>
+                                        <input v-model="email" type="email" id="typeEmailX" class="form-control form-control-lg" @input="validateEmail"/>
+                                        <span class="text-danger">{{ emailError }}</span>
                                     </div>
 
                                     <div class="form-outline form-white mb-4">
-                                        <input v-model="password" type="password" id="typePasswordX" class="form-control form-control-lg"/>
                                         <label class="form-label" for="typePasswordX">Пароль</label>
+                                        <input v-model="password" type="password" id="typePasswordX" class="form-control form-control-lg" @input="validatePassword"/>
+                                        <span class="text-danger">{{ passwordError }}</span>
                                     </div>
                                     <div class="form-outline form-white mb-4">
-                                        <input v-model="password_confirmation" type="password_confirmation" id="typeConfirmPasswordX" class="form-control form-control-lg"/>
                                         <label class="form-label" for="typeConfirmPasswordX">Підтвердження паролю</label>
+                                        <input v-model="password_confirmation" type="password" id="typeConfirmPasswordX" class="form-control form-control-lg" @input="validateConfirmPassword"/>
+                                        <span class="text-danger">{{ confirmPasswordError }}</span>
                                     </div>
                                     <button class="btn btn-outline-light btn-lg px-5" type="submit" @click.prevent="sendCredentials">Реєстрація</button>
                                 </div>
@@ -57,6 +61,10 @@ export default {
             email: null,
             password: null,
             password_confirmation: null,
+            nameError:null,
+            emailError: null,
+            passwordError: null,
+            confirmPasswordError:null,
         }
     },
     methods: {
@@ -64,15 +72,62 @@ export default {
         router() {
             return router
         },
-        sendCredentials() {
-            const userData = {
-                'name':this.name,
-                'email':this.email,
-                'password':this.password,
-                'password_confirmation':this.password_confirmation,
-                'device_name' : 'desktop'
+        validateEmail() {
+            if (!this.email) {
+                this.emailError = 'input is empty';
+            } else if (!/\S+@\S+\.\S+/.test(this.email)) {
+                this.emailError = 'Incorrect email';
+            } else {
+                this.emailError = null;
             }
-            this.registerUser(userData);
+        },
+        validatePassword() {
+            if (!this.password) {
+                this.passwordError = 'input password';
+            } else {
+                this.passwordError = null;
+            }
+        },
+        validateName() {
+            if (!this.name) {
+                this.nameError = "Input name";
+            } else {
+                this.nameError = null;
+            }
+        },
+        validateConfirmPassword() {
+            if (!this.password_confirmation) {
+                this.confirmPasswordError = "Repeat password";
+            }
+            else if (this.password !== this.password_confirmation) {
+                this.confirmPasswordError = 'No suggestions';
+            } else {
+                this.confirmPasswordError = null;
+            }
+        },
+        async sendCredentials() {
+            try {
+                this.validateName();
+                this.validateEmail();
+                this.validatePassword();
+                this.validateConfirmPassword();
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+                if (!this.emailError && !this.passwordError && !this.nameError && !this.confirmPasswordError) {
+                    const userData = {
+                        'name': this.name,
+                        'email': this.email,
+                        'password': this.password,
+                        'password_confirmation': this.password_confirmation,
+                        'device_name': isMobile ? 'mobile' : 'desktop'
+                    }
+
+                    this.registerUser(userData).finally(()=> {this.$router.push({ name: 'Home' }); });
+
+                }
+            } catch (error) {
+                // Handle errors here
+            }
         }
     },
 }
